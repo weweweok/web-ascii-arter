@@ -51,7 +51,7 @@ export default function ImageForm() {
           ファイルをアップロードする
         </button>
       </form>
-      <img id="preview" />
+      <img id="preview" class="top-0 left-1/2 " />
     </div>
   );
 }
