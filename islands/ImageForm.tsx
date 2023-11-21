@@ -1,5 +1,5 @@
-import { HttpCache } from "https://deno.land/x/deno_cache@0.4.1/http_cache.ts";
 import { useSignal } from "https://esm.sh/*@preact/signals@1.2.1";
+import { encode } from "https://deno.land/std@0.193.0/encoding/hex.ts";
 
 export default function ImageForm() {
   const buttonActiveDisable = useSignal(false);
@@ -23,13 +23,11 @@ export default function ImageForm() {
     const image = imageElement.src;
     const url = window.location;
 
-    console.log(url);
     fetch(url + "api/image", {
       method: "POST",
-      mode: "cors",
-      body: JSON.stringify(image),
+      body: image,
     }).then((data) => {
-      console.log(data.text);
+      console.log(data);
     });
   };
   return (
