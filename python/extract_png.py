@@ -1,12 +1,15 @@
 from pathlib import Path
 from PIL import Image, ImageSequence
+import os
 
 
 # 現在の状況を標準出力に表示するかどうか
 DEBUG_MODE = True
 
 
-async def main(image_path: str, destination: str = "splitted"):
+def extract_png(
+    image_path: str, destination: str = os.getcwd() + "/python" + "/splitted"
+):
     frames = get_frames(image_path)
     write_frames(frames, image_path, destination)
 

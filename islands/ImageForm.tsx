@@ -17,18 +17,18 @@ export default function ImageForm() {
     }
   };
 
-  const upLoadToServer = function (e: Event) {
+  const upLoadToServer = async function (e: Event) {
     e.preventDefault();
     const imageElement = document.getElementById("preview") as HTMLImageElement;
     const image = imageElement.src;
     const url = window.location;
 
-    fetch(url + "api/image", {
+    const response = await fetch(url + "api/image", {
       method: "POST",
       body: image,
-    }).then((data) => {
-      console.log(data);
     });
+    const asciiArt = await response;
+    console.log(asciiArt);
   };
   return (
     <div class="top-0 left-1/2 translate-x-1/4">

@@ -1,6 +1,6 @@
 from PIL import Image, ImageDraw, ImageFont
 import numpy as np
-from extract_png import main
+from extract_png import extract_png
 import os.path
 import os
 import glob
@@ -19,10 +19,12 @@ FONT_PATH = "./font/UbuntuMono-B.ttf"
 FONT_COLOR, FONT_BACKGROUND_COLOR = FONT_COLOR_SET
 COLUMNS, ROWS = GRID_SIZE
 
+ABSOLUTE_PATH = os.getcwd() + "/python"
+
 
 def convert_to_png(gif_name: str):
-    main(gif_name)
-    IMAGE_NAMES = glob.glob("./splitted/*.png")
+    extract_png(gif_name)
+    IMAGE_NAMES = glob.glob(ABSOLUTE_PATH + "/splitted/*.png")
 
     return sorted(IMAGE_NAMES)
 
@@ -92,11 +94,11 @@ def image2ascii(input_image):
 
 
 def make_ascii_gif():
-    files = sorted(glob.glob("./ascii_arts/*.png"))
+    files = sorted(glob.glob(ABSOLUTE_PATH + "/ascii_arts/*.png"))
 
     images = list(map(lambda file: Image.open(file), files))
     images[0].save(
-        "anime.gif",
+        ABSOLUTE_PATH + "/anime.gif",
         save_all=True,
         append_images=images[1:],
         optimize=False,
@@ -106,8 +108,8 @@ def make_ascii_gif():
 
 
 def delete_folder():
-    shutil.rmtree("./splitted")
-    shutil.rmtree("./ascii_arts")
+    shutil.rmtree(ABSOLUTE_PATH + "/splitted")
+    shutil.rmtree(ABSOLUTE_PATH + "/ascii_arts")
 
 
 def announce():
@@ -115,11 +117,12 @@ def announce():
 
 
 if __name__ == "__main__":
-    image_names = convert_to_png("./posted-image.gif")
+    image_names = convert_to_png(ABSOLUTE_PATH + "/posted-image.gif")
     directory_name = os.path.dirname(image_names[0])
+    sys.stdout.write(directory_name)
     if directory_name != "":
         directory_name = directory_name + "/"
-    ascii_image_directory = "ascii_arts"
+    ascii_image_directory = ABSOLUTE_PATH + "/ascii_arts"
 
     for image_name in image_names:
         print("Input image: {0}".format(image_name))

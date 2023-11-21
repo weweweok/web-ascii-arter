@@ -1,20 +1,17 @@
 import { HandlerContext } from "$fresh/server.ts";
 import { decode, encode } from "$std/encoding/base64.ts";
 
-async function runPython() {
+async function runPython(): Promise<string> {
   const command = await new Deno.Command("python3", {
     args: ["python/gif_ascii_arter.py"],
   });
   const { code, stdout, stderr } = await command.output();
-  if (code === 0) {
-    console.info(new TextDecoder().decode(stdout));
-  } else {
-    console.error(new TextDecoder().decode(stderr));
-  }
+  console.log(code);
+  console.info(new TextDecoder().decode(stdout));
+  console.error(new TextDecoder().decode(stderr));
 
-  // const gif = await Deno.readFile("python/anime.gif");
-  // const result = encode(gif);
-  // return result;
+  const getAsciiArt = await Deno.readFile("./python/anime.gif");
+  return encode(getAsciiArt);
 }
 export const handler = async (
   _req: Request,
@@ -26,10 +23,11 @@ export const handler = async (
     /^data:image\/[a-z]+;base64,/,
     "",
   );
-  console.log(imagestring.substring(0, 20));
   const decodeArrayBuffer: Uint8Array = decode(imagestring);
 
   await Deno.writeFile("python/posted-image.gif", decodeArrayBuffer);
   const output = await runPython();
+  await Deno.remove("python/posted-image.gif");
+  await Deno.remove("python/anime.gif");
   return new Response(output);
 };
