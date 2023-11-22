@@ -5,10 +5,12 @@ import { decode } from "$std/encoding/base64.ts";
 export default function ImageForm() {
   const isActiveFileUpLoderDisable = useSignal(false);
   const isbuttonActiveDisable = useSignal(false);
+  const isAsciiArtpreviewHide = useSignal(true);
   const isPreviewHide = useSignal(false);
   const isAnnounsing = useSignal(false);
 
   const uploadImage = function (event: Event) {
+    if (!isAsciiArtpreviewHide.value) isActiveFileUpLoderDisable.value = true;
     const fileData = new FileReader();
     fileData.onload = function () {
       const preview = document.getElementById("preview") as HTMLImageElement;
@@ -34,12 +36,14 @@ export default function ImageForm() {
       method: "POST",
       body: image,
     });
+    isAsciiArtpreviewHide.value = false;
     const asciiArt = await response.text();
 
     const asciiArtPreview = await document.getElementById(
       "ascii-art",
     ) as HTMLImageElement;
     asciiArtPreview.src = "data:image/png;base64," + asciiArt;
+
     isActiveFileUpLoderDisable.value = false;
     isbuttonActiveDisable.value = false;
     isPreviewHide.value = false;
@@ -81,12 +85,12 @@ export default function ImageForm() {
         )
         : undefined}
 
-      <div>
+      {isAsciiArtpreviewHide.value ? undefined : (
         <img
           id="ascii-art"
           class="max-w-xs max-h-56 content-center"
         />
-      </div>
+      )}
     </div>
   );
 }
