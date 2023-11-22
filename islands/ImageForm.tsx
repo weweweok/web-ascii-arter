@@ -37,7 +37,7 @@ export default function ImageForm() {
       body: image,
     });
     isAsciiArtpreviewHide.value = false;
-    if (!response.ok) console.error(response.statusText);
+    if (!response.ok) console.error(response.status);
     const asciiArt = await response.text();
 
     const asciiArtPreview = await document.getElementById(
