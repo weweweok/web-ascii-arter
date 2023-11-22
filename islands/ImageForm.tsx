@@ -35,6 +35,7 @@ export default function ImageForm() {
     const response = await fetch(url + "api/image", {
       method: "POST",
       body: image,
+      mode: "cors",
     });
     isAsciiArtpreviewHide.value = false;
     if (!response.ok) console.error(response.statusText);
