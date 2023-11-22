@@ -27,11 +27,11 @@ export const handler = async (
   );
   const decodeArrayBuffer: Uint8Array = decode(imagestring);
 
-  await Deno.writeFile("python/posted-image.gif", decodeArrayBuffer);
+  await Deno.writeFile("./python/posted-image.gif", decodeArrayBuffer);
   const output = await runPython();
   try {
-    await Deno.remove("python/posted-image.gif");
-    await Deno.remove("python/anime.gif");
+    await Deno.remove("./python/posted-image.gif");
+    await Deno.remove("./python/anime.gif");
   } catch (e) {
     return new Response("There are any error", e);
   }
