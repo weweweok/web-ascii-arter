@@ -27,6 +27,7 @@ export default function ImageForm() {
     const imageElement = document.getElementById("preview") as HTMLImageElement;
     const image = imageElement.src;
     const url = window.location;
+    console.log("url is :" + url);
     isActiveFileUpLoderDisable.value = true;
     isbuttonActiveDisable.value = true;
     isPreviewHide.value = true;
