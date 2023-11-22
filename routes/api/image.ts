@@ -7,8 +7,11 @@ async function runPython(): Promise<string> {
   });
   const { code, stdout, stderr } = await command.output();
   console.log(code);
-  console.info(new TextDecoder().decode(stdout));
-  console.error(new TextDecoder().decode(stderr));
+  if (code === 0) {
+    console.info(new TextDecoder().decode(stdout));
+  } else {
+    return new TextDecoder().decode(stderr);
+  }
 
   const getAsciiArt = await Deno.readFile("./python/anime.gif");
   return encode(getAsciiArt);
