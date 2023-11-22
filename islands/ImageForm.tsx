@@ -27,7 +27,6 @@ export default function ImageForm() {
     const imageElement = document.getElementById("preview") as HTMLImageElement;
     const image = imageElement.src;
     const url = window.location;
-    console.log("url is :" + url);
     isActiveFileUpLoderDisable.value = true;
     isbuttonActiveDisable.value = true;
     isPreviewHide.value = true;
@@ -36,6 +35,8 @@ export default function ImageForm() {
     const response = await fetch(url + "api/image", {
       method: "POST",
       body: image,
+    }).catch((e) => {
+      console.error(e);
     });
     isAsciiArtpreviewHide.value = false;
     const asciiArt = await response.text();
