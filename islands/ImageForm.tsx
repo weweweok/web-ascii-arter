@@ -1,11 +1,14 @@
 import { useSignal } from "https://esm.sh/*@preact/signals@1.2.1";
 import { encode } from "https://deno.land/std@0.193.0/encoding/hex.ts";
+import { decode } from "$std/encoding/base64.ts";
 
 export default function ImageForm() {
-  const buttonActiveDisable = useSignal(false);
+  const isActiveFileUpLoderDisable = useSignal(false);
+  const isbuttonActiveDisable = useSignal(false);
+  const isPreviewHide = useSignal(false);
+  const isAnnounsing = useSignal(false);
 
   const uploadImage = function (event: Event) {
-    buttonActiveDisable.value = true;
     const fileData = new FileReader();
     fileData.onload = function () {
       const preview = document.getElementById("preview") as HTMLImageElement;
@@ -22,20 +25,32 @@ export default function ImageForm() {
     const imageElement = document.getElementById("preview") as HTMLImageElement;
     const image = imageElement.src;
     const url = window.location;
+    isActiveFileUpLoderDisable.value = true;
+    isbuttonActiveDisable.value = true;
+    isPreviewHide.value = true;
+    isAnnounsing.value = true;
 
     const response = await fetch(url + "api/image", {
       method: "POST",
       body: image,
     });
-    const asciiArt = await response;
-    console.log(asciiArt);
+    const asciiArt = await response.text();
+
+    const asciiArtPreview = await document.getElementById(
+      "ascii-art",
+    ) as HTMLImageElement;
+    asciiArtPreview.src = "data:image/png;base64," + asciiArt;
+    isActiveFileUpLoderDisable.value = false;
+    isbuttonActiveDisable.value = false;
+    isPreviewHide.value = false;
+    isAnnounsing.value = false;
   };
   return (
-    <div class="top-0 left-1/2 translate-x-1/4">
+    <div class="content-center items-center self-center translate-x-1/4">
       <form action="post">
         <input
           type="file"
-          disabled={buttonActiveDisable.value}
+          disabled={isActiveFileUpLoderDisable.value}
           accept="image/*"
           id="upload-form"
           class="border-8 border-white"
@@ -43,13 +58,35 @@ export default function ImageForm() {
         />
         <button
           type="submit"
+          disabled={isbuttonActiveDisable.value}
           onClick={(e) => upLoadToServer(e)}
           class="border-1 rounded-md border-blue-300 bg-blue-300"
         >
           ファイルをアップロードする
         </button>
       </form>
-      <img id="preview" class="top-0 left-1/2 " />
+      {!isPreviewHide.value
+        ? (
+          <img
+            id="preview"
+            class="max-w-xs max-h-56 "
+          />
+        )
+        : undefined}
+      {isAnnounsing.value
+        ? (
+          <div id="announce-generating">
+            <h1>アスキーアートを生成中...</h1>
+          </div>
+        )
+        : undefined}
+
+      <div>
+        <img
+          id="ascii-art"
+          class="max-w-xs max-h-56 content-center"
+        />
+      </div>
     </div>
   );
 }

@@ -6,7 +6,6 @@ async function runPython(): Promise<string> {
     args: ["python/gif_ascii_arter.py"],
   });
   const { code, stdout, stderr } = await command.output();
-  console.log(code);
   if (code === 0) {
     console.info(new TextDecoder().decode(stdout));
   } else {
@@ -30,7 +29,12 @@ export const handler = async (
 
   await Deno.writeFile("python/posted-image.gif", decodeArrayBuffer);
   const output = await runPython();
-  await Deno.remove("python/posted-image.gif");
-  await Deno.remove("python/anime.gif");
+  try {
+    await Deno.remove("python/posted-image.gif");
+    await Deno.remove("python/anime.gif");
+  } catch (e) {
+    return new Response("There are any error", e);
+  }
+
   return new Response(output);
 };
