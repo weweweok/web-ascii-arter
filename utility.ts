@@ -1,5 +1,5 @@
 import { encode } from "$std/encoding/base64.ts";
-import { python } from "https://deno.land/x/python@0.4.1/mod.ts";
+import { python } from "https://deno.land/x/python@0.4.2/mod.ts";
 const createAsciiArtFile = `
 from PIL import Image, ImageDraw, ImageFont
 import os.path
