@@ -201,7 +201,7 @@ async function runPython(): Promise<string> {
     createAsciiArtFile,
     "CreateAsciiArt",
   );
-  createAsciiArt.CreateAsciiArt().create_ascii_art();
+  await createAsciiArt.CreateAsciiArt().create_ascii_art();
 
   const getAsciiArt = await Deno.readFile("./anime.gif");
   return encode(getAsciiArt);
