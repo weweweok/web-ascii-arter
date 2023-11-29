@@ -22,27 +22,34 @@ export default function ImageForm() {
 
   const upLoadToServer = async function (e: Event) {
     e.preventDefault();
-    const imageElement = document.getElementById("preview") as HTMLImageElement;
-    const image = imageElement.src;
+    const imageElement = document.getElementById(
+      "upload-form",
+    ) as HTMLFormElement;
+    const image = imageElement.files[0];
     const url = window.location;
     isActiveFileUpLoderDisable.value = true;
     isbuttonActiveDisable.value = true;
     isPreviewHide.value = true;
     isAnnounsing.value = true;
 
-    const response = await fetch(url + "api/image", {
+    const formData = new FormData();
+    formData.append("files", image);
+    const response = await fetch("http://127.0.0.1:8001/files/", {
       method: "POST",
-      body: image,
+      body: formData,
+      mode: "cors",
     });
+    const asciiArtBlob = await response.blob();
+    const blobUrl = await window.URL.createObjectURL(asciiArtBlob);
     isAsciiArtpreviewHide.value = false;
-    if (!response.ok) console.error(response.status);
-    const asciiArt = await response.text();
-
-    const asciiArtPreview = await document.getElementById(
-      "ascii-art",
-    ) as HTMLImageElement;
-    asciiArtPreview.src = "data:image/png;base64," + asciiArt;
-
+    const fileData = new FileReader();
+    fileData.onload = function () {
+      const asciiArtPreview = document.getElementById(
+        "ascii-art",
+      ) as HTMLImageElement;
+      asciiArtPreview.src = blobUrl;
+    };
+    fileData.readAsDataURL(asciiArtBlob);
     isActiveFileUpLoderDisable.value = false;
     isbuttonActiveDisable.value = false;
     isPreviewHide.value = false;
@@ -54,7 +61,7 @@ export default function ImageForm() {
         <input
           type="file"
           disabled={isActiveFileUpLoderDisable.value}
-          accept="image/*"
+          enctype="multipart/form-data"
           id="upload-form"
           class="border-8 border-white"
           onChange={(event) => uploadImage(event)}
@@ -87,6 +94,7 @@ export default function ImageForm() {
       {isAsciiArtpreviewHide.value ? undefined : (
         <img
           id="ascii-art"
+          src=""
           class="max-w-xs max-h-56 content-center"
         />
       )}
