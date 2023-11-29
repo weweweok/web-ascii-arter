@@ -35,7 +35,7 @@ export default function ImageForm() {
     formData.append("files", image);
     let url = "http://127.0.0.1:8001/files/";
     if (!window.location.host.includes("localhost")) {
-      url = "https://create-ascii-art.onrender.com";
+      url = "https://create-ascii-art.onrender.com/files/";
     }
     const response = await fetch(url, {
       method: "POST",
