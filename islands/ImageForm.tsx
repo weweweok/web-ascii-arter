@@ -26,7 +26,6 @@ export default function ImageForm() {
       "upload-form",
     ) as HTMLFormElement;
     const image = imageElement.files[0];
-    const url = window.location;
     isActiveFileUpLoderDisable.value = true;
     isbuttonActiveDisable.value = true;
     isPreviewHide.value = true;
@@ -34,7 +33,11 @@ export default function ImageForm() {
 
     const formData = new FormData();
     formData.append("files", image);
-    const response = await fetch("http://127.0.0.1:8001/files/", {
+    let url = "http://127.0.0.1:8001/files/";
+    if (!window.location.host.includes("localhost")) {
+      url = "https://create-ascii-art.onrender.com";
+    }
+    const response = await fetch(url, {
       method: "POST",
       body: formData,
       mode: "cors",
