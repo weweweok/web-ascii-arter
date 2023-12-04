@@ -1,3 +1,4 @@
+import { Signal } from "@preact/signals";
 import { useSignal } from "https://esm.sh/*@preact/signals@1.2.1";
 
 export default function ImageForm() {
@@ -8,7 +9,8 @@ export default function ImageForm() {
   const isAnnounsing = useSignal(false);
 
   const uploadImage = function (event: Event) {
-    if (!isAsciiArtpreviewHide.value) isActiveFileUpLoderDisable.value = true;
+    changeBoolSignal(isActiveFileUpLoderDisable);
+
     const fileData = new FileReader();
     fileData.onload = function () {
       const preview = document.getElementById("preview") as HTMLImageElement;
@@ -26,14 +28,17 @@ export default function ImageForm() {
       "upload-form",
     ) as HTMLFormElement;
     const image = imageElement.files[0];
-    isActiveFileUpLoderDisable.value = true;
-    isbuttonActiveDisable.value = true;
-    isPreviewHide.value = true;
-    isAnnounsing.value = true;
+    changeBoolSignal(
+      isbuttonActiveDisable,
+      isPreviewHide,
+      isAnnounsing,
+    );
 
     const formData = new FormData();
     formData.append("files", image);
-    const url = "https://create-ascii-art.onrender.com/files/";
+    const url = location.hostname === "localhost"
+      ? "http://127.0.0.1:8080/files/"
+      : "https://create-ascii-art.onrender.com/files/";
     const response = await fetch(url, {
       method: "POST",
       body: formData,
@@ -41,7 +46,7 @@ export default function ImageForm() {
     });
     const asciiArtBlob = await response.blob();
     const blobUrl = await window.URL.createObjectURL(asciiArtBlob);
-    isAsciiArtpreviewHide.value = false;
+    changeBoolSignal(isAsciiArtpreviewHide);
     const fileData = new FileReader();
     fileData.onload = function () {
       const asciiArtPreview = document.getElementById(
@@ -50,10 +55,12 @@ export default function ImageForm() {
       asciiArtPreview.src = blobUrl;
     };
     fileData.readAsDataURL(asciiArtBlob);
-    isActiveFileUpLoderDisable.value = false;
-    isbuttonActiveDisable.value = false;
-    isPreviewHide.value = false;
-    isAnnounsing.value = false;
+    changeBoolSignal(
+      isActiveFileUpLoderDisable,
+      isbuttonActiveDisable,
+      isPreviewHide,
+      isAnnounsing,
+    );
   };
   return (
     <div class="content-center items-center self-center translate-x-1/4">
@@ -91,13 +98,18 @@ export default function ImageForm() {
         )
         : undefined}
 
-      {isAsciiArtpreviewHide.value ? undefined : (
-        <img
-          id="ascii-art"
-          src=""
-          class="max-w-xs max-h-56 content-center"
-        />
-      )}
+      <img
+        id="ascii-art"
+        src=""
+        class="max-w-xs max-h-56 content-center"
+      />
     </div>
   );
+}
+
+/*
+ *  Signalの真理値を反転させる関数
+ */
+function changeBoolSignal(...boolSignal: Signal<boolean>[]) {
+  boolSignal.map((v) => v.value = !v.value);
 }
