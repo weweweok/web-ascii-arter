@@ -1,4 +1,4 @@
-import { useSignal } from "https://esm.sh/*@preact/signals@1.2.1";
+import { Signal, useSignal } from "https://esm.sh/*@preact/signals@1.2.1";
 
 const createAsciiArt = async (image: File) => {
   const formData = new FormData();
@@ -36,6 +36,20 @@ const loadImageWhencreateAsciiArt = (
   const preview = document.getElementById("preview") as HTMLImageElement;
   preview.src = "";
 });
+
+const downloadAsciiArt = (asciiArtFileType: Signal<string>) => {
+  const asciiArtPreview = document.getElementById(
+    "ascii-art",
+  ) as HTMLImageElement;
+  const asciiArt = asciiArtPreview.src;
+
+  const download = document.createElement("a");
+  download.href = asciiArt;
+  download.download = `ascii-art.${asciiArtFileType.value.split("/")[1]}`;
+  document.body.appendChild(download);
+  download.click();
+  document.body.removeChild(download);
+};
 
 export default function ImageForm() {
   const isActiveFileUpLoderDisable = useSignal(false);
@@ -77,20 +91,6 @@ export default function ImageForm() {
     isAnnounsing.value = false;
   };
 
-  const downloadAsciiArt = () => {
-    const asciiArtPreview = document.getElementById(
-      "ascii-art",
-    ) as HTMLImageElement;
-    const asciiArt = asciiArtPreview.src;
-
-    const download = document.createElement("a");
-    download.href = asciiArt;
-    download.download = `ascii-art.${asciiArtFileType.value.split("/")[1]}`;
-    document.body.appendChild(download);
-    download.click();
-    document.body.removeChild(download);
-  };
-
   return (
     <div class="content-center items-center self-center translate-x-1/4">
       <form action="post">
@@ -122,7 +122,7 @@ export default function ImageForm() {
       <img id="ascii-art" src="" class="max-w-xs max-h-56 content-center" />
       <button
         onClick={() => {
-          downloadAsciiArt();
+          downloadAsciiArt(asciiArtFileType);
         }}
       >
         アスキーアートをダウンロード
