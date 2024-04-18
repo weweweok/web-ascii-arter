@@ -85,13 +85,12 @@ export default function ImageForm() {
           ファイルをアップロードする
         </button>
       </form>
-      <img id="preview" class="max-w-xs max-h-56 " />
       {isAnnounsing.value ? (
         <div id="announce-generating">
           <h1>アスキーアートを生成中...</h1>
         </div>
       ) : undefined}
-
+      <img id="preview" class="max-w-xs max-h-56 " />
       <img id="ascii-art" src="" class="max-w-xs max-h-56 content-center" />
     </div>
   );
