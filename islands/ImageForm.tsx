@@ -1,4 +1,3 @@
-import { Signal } from "@preact/signals";
 import { useSignal } from "https://esm.sh/*@preact/signals@1.2.1";
 
 export default function ImageForm() {
@@ -8,11 +7,11 @@ export default function ImageForm() {
   const isPreviewHide = useSignal(false);
   const isAnnounsing = useSignal(false);
 
-  const uploadImage = function (event: Event) {
+  const uploadImage = (event: Event) => {
     isActiveFileUpLoderDisable.value = true;
 
     const fileData = new FileReader();
-    fileData.onload = function () {
+    fileData.onload = () => {
       const preview = document.getElementById("preview") as HTMLImageElement;
       preview.src = fileData.result as string;
     };
@@ -22,7 +21,7 @@ export default function ImageForm() {
     }
   };
 
-  const upLoadToServer = async function (e: Event) {
+  const upLoadToServer = async (e: Event) => {
     e.preventDefault();
     const imageElement = document.getElementById(
       "upload-form"
@@ -48,7 +47,7 @@ export default function ImageForm() {
     const blobUrl = await window.URL.createObjectURL(asciiArtBlob);
     isAsciiArtpreviewHide.value = false;
     const fileData = new FileReader();
-    fileData.onload = function () {
+    fileData.onload = () => {
       const asciiArtPreview = document.getElementById(
         "ascii-art"
       ) as HTMLImageElement;
