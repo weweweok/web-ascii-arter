@@ -11,6 +11,10 @@ export default function ImageForm() {
 
     const fileData = new FileReader();
     fileData.onload = () => {
+      const asciiArtPreview = document.getElementById(
+        "ascii-art"
+      ) as HTMLImageElement;
+      asciiArtPreview.src = "";
       const preview = document.getElementById("preview") as HTMLImageElement;
       preview.src = fileData.result as string;
     };
