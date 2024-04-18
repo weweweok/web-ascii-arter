@@ -41,6 +41,7 @@ export default function ImageForm() {
   const isActiveFileUpLoderDisable = useSignal(false);
   const buttonDisable = useSignal(false);
   const isAnnounsing = useSignal(false);
+  const asciiArtFileType = useSignal("");
 
   const uploadImage = (event: Event) => {
     isActiveFileUpLoderDisable.value = true;
@@ -68,6 +69,7 @@ export default function ImageForm() {
     const blobUrl = await window.URL.createObjectURL(asciiArtBlob);
     const fileData = new FileReader();
     loadImageWhencreateAsciiArt(fileData, blobUrl);
+    asciiArtFileType.value = asciiArtBlob.type;
     fileData.readAsDataURL(asciiArtBlob);
 
     isActiveFileUpLoderDisable.value = false;
@@ -80,10 +82,10 @@ export default function ImageForm() {
       "ascii-art",
     ) as HTMLImageElement;
     const asciiArt = asciiArtPreview.src;
-    console.log(asciiArt);
+
     const download = document.createElement("a");
     download.href = asciiArt;
-    download.download = "ascii-art.png";
+    download.download = `ascii-art.${asciiArtFileType.value.split("/")[1]}`;
     document.body.appendChild(download);
     download.click();
     document.body.removeChild(download);
