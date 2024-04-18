@@ -74,6 +74,21 @@ export default function ImageForm() {
     buttonDisable.value = false;
     isAnnounsing.value = false;
   };
+
+  const downloadAsciiArt = () => {
+    const asciiArtPreview = document.getElementById(
+      "ascii-art",
+    ) as HTMLImageElement;
+    const asciiArt = asciiArtPreview.src;
+    console.log(asciiArt);
+    const download = document.createElement("a");
+    download.href = asciiArt;
+    download.download = "ascii-art.png";
+    document.body.appendChild(download);
+    download.click();
+    document.body.removeChild(download);
+  };
+
   return (
     <div class="content-center items-center self-center translate-x-1/4">
       <form action="post">
@@ -103,6 +118,13 @@ export default function ImageForm() {
         : undefined}
       <img id="preview" class="max-w-xs max-h-56 " />
       <img id="ascii-art" src="" class="max-w-xs max-h-56 content-center" />
+      <button
+        onClick={() => {
+          downloadAsciiArt();
+        }}
+      >
+        アスキーアートをダウンロード
+      </button>
     </div>
   );
 }
