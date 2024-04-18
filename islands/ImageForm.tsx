@@ -2,9 +2,9 @@ import { useSignal } from "https://esm.sh/*@preact/signals@1.2.1";
 
 export default function ImageForm() {
   const isActiveFileUpLoderDisable = useSignal(false);
-  const isbuttonActiveDisable = useSignal(false);
+  const buttonDisable = useSignal(false);
   const isAsciiArtpreviewHide = useSignal(true);
-  const isPreviewHide = useSignal(false);
+  const previewUploadImage = useSignal(false);
   const isAnnounsing = useSignal(false);
 
   const uploadImage = (event: Event) => {
@@ -28,8 +28,8 @@ export default function ImageForm() {
     ) as HTMLFormElement;
     const image = imageElement.files[0];
 
-    isbuttonActiveDisable.value = true;
-    isPreviewHide.value = true;
+    buttonDisable.value = true;
+    previewUploadImage.value = true;
     isAnnounsing.value = true;
 
     const formData = new FormData();
@@ -56,8 +56,8 @@ export default function ImageForm() {
     fileData.readAsDataURL(asciiArtBlob);
 
     isActiveFileUpLoderDisable.value = false;
-    isbuttonActiveDisable.value = false;
-    isPreviewHide.value = false;
+    buttonDisable.value = false;
+    previewUploadImage.value = false;
     isAnnounsing.value = false;
   };
   return (
@@ -73,14 +73,14 @@ export default function ImageForm() {
         />
         <button
           type="submit"
-          disabled={isbuttonActiveDisable.value}
+          disabled={buttonDisable.value}
           onClick={(e) => upLoadToServer(e)}
           class="border-1 rounded-md border-blue-300 bg-blue-300"
         >
           ファイルをアップロードする
         </button>
       </form>
-      {!isPreviewHide.value ? (
+      {!previewUploadImage.value ? (
         <img id="preview" class="max-w-xs max-h-56 " />
       ) : undefined}
       {isAnnounsing.value ? (
