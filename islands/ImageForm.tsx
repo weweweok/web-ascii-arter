@@ -3,10 +3,9 @@ import { useSignal } from "https://esm.sh/*@preact/signals@1.2.1";
 const createAsciiArt = async (image: File) => {
   const formData = new FormData();
   formData.append("files", image);
-  const url =
-    location.hostname === "localhost"
-      ? "http://127.0.0.1:8080/files/"
-      : "https://create-ascii-art.onrender.com/files/";
+  const url = location.hostname === "localhost"
+    ? "http://127.0.0.1:8080/files/"
+    : "https://create-ascii-art.onrender.com/files/";
   const response = await fetch(url, {
     method: "POST",
     body: formData,
@@ -14,6 +13,29 @@ const createAsciiArt = async (image: File) => {
   });
   return response.blob();
 };
+
+const loadImageWhenUploadImage = (
+  fileData: FileReader,
+) => (fileData.onload = () => {
+  const asciiArtPreview = document.getElementById(
+    "ascii-art",
+  ) as HTMLImageElement;
+  asciiArtPreview.src = "";
+  const preview = document.getElementById("preview") as HTMLImageElement;
+  preview.src = fileData.result as string;
+});
+
+const loadImageWhencreateAsciiArt = (
+  fileData: FileReader,
+  blobUrl: string,
+) => (fileData.onload = () => {
+  const asciiArtPreview = document.getElementById(
+    "ascii-art",
+  ) as HTMLImageElement;
+  asciiArtPreview.src = blobUrl;
+  const preview = document.getElementById("preview") as HTMLImageElement;
+  preview.src = "";
+});
 
 export default function ImageForm() {
   const isActiveFileUpLoderDisable = useSignal(false);
@@ -24,14 +46,8 @@ export default function ImageForm() {
     isActiveFileUpLoderDisable.value = true;
 
     const fileData = new FileReader();
-    fileData.onload = () => {
-      const asciiArtPreview = document.getElementById(
-        "ascii-art"
-      ) as HTMLImageElement;
-      asciiArtPreview.src = "";
-      const preview = document.getElementById("preview") as HTMLImageElement;
-      preview.src = fileData.result as string;
-    };
+    loadImageWhenUploadImage(fileData);
+
     const inputElement = event.target as HTMLInputElement;
     if (inputElement.files) {
       fileData.readAsDataURL(inputElement.files[0]);
@@ -41,7 +57,7 @@ export default function ImageForm() {
   const upLoadToServer = async (e: Event) => {
     e.preventDefault();
     const imageElement = document.getElementById(
-      "upload-form"
+      "upload-form",
     ) as HTMLFormElement;
     const image = imageElement.files[0];
 
@@ -51,14 +67,7 @@ export default function ImageForm() {
     const asciiArtBlob = await createAsciiArt(image);
     const blobUrl = await window.URL.createObjectURL(asciiArtBlob);
     const fileData = new FileReader();
-    fileData.onload = () => {
-      const asciiArtPreview = document.getElementById(
-        "ascii-art"
-      ) as HTMLImageElement;
-      asciiArtPreview.src = blobUrl;
-      const preview = document.getElementById("preview") as HTMLImageElement;
-      preview.src = "";
-    };
+    loadImageWhencreateAsciiArt(fileData, blobUrl);
     fileData.readAsDataURL(asciiArtBlob);
 
     isActiveFileUpLoderDisable.value = false;
@@ -85,11 +94,13 @@ export default function ImageForm() {
           ファイルをアップロードする
         </button>
       </form>
-      {isAnnounsing.value ? (
-        <div id="announce-generating">
-          <h1>アスキーアートを生成中...</h1>
-        </div>
-      ) : undefined}
+      {isAnnounsing.value
+        ? (
+          <div id="announce-generating">
+            <h1>アスキーアートを生成中...</h1>
+          </div>
+        )
+        : undefined}
       <img id="preview" class="max-w-xs max-h-56 " />
       <img id="ascii-art" src="" class="max-w-xs max-h-56 content-center" />
     </div>
