@@ -121,6 +121,7 @@ export default function ImageForm() {
       <img id="preview" class="max-w-xs max-h-56 " />
       <img id="ascii-art" src="" class="max-w-xs max-h-56 content-center" />
       <button
+        class="border border-black rounded-md border-green-300 bg-green-300"
         onClick={() => {
           downloadAsciiArt(asciiArtFileType);
         }}
