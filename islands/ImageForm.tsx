@@ -1,5 +1,20 @@
 import { useSignal } from "https://esm.sh/*@preact/signals@1.2.1";
 
+const createAsciiArt = async (image: File) => {
+  const formData = new FormData();
+  formData.append("files", image);
+  const url =
+    location.hostname === "localhost"
+      ? "http://127.0.0.1:8080/files/"
+      : "https://create-ascii-art.onrender.com/files/";
+  const response = await fetch(url, {
+    method: "POST",
+    body: formData,
+    mode: "cors",
+  });
+  return response.blob();
+};
+
 export default function ImageForm() {
   const isActiveFileUpLoderDisable = useSignal(false);
   const buttonDisable = useSignal(false);
@@ -35,18 +50,7 @@ export default function ImageForm() {
     previewUploadImage.value = true;
     isAnnounsing.value = true;
 
-    const formData = new FormData();
-    formData.append("files", image);
-    const url =
-      location.hostname === "localhost"
-        ? "http://127.0.0.1:8080/files/"
-        : "https://create-ascii-art.onrender.com/files/";
-    const response = await fetch(url, {
-      method: "POST",
-      body: formData,
-      mode: "cors",
-    });
-    const asciiArtBlob = await response.blob();
+    const asciiArtBlob = await createAsciiArt(image);
     const blobUrl = await window.URL.createObjectURL(asciiArtBlob);
     const fileData = new FileReader();
     fileData.onload = () => {
