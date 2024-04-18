@@ -18,7 +18,6 @@ const createAsciiArt = async (image: File) => {
 export default function ImageForm() {
   const isActiveFileUpLoderDisable = useSignal(false);
   const buttonDisable = useSignal(false);
-  const previewUploadImage = useSignal(false);
   const isAnnounsing = useSignal(false);
 
   const uploadImage = (event: Event) => {
@@ -47,7 +46,6 @@ export default function ImageForm() {
     const image = imageElement.files[0];
 
     buttonDisable.value = true;
-    previewUploadImage.value = true;
     isAnnounsing.value = true;
 
     const asciiArtBlob = await createAsciiArt(image);
@@ -58,12 +56,13 @@ export default function ImageForm() {
         "ascii-art"
       ) as HTMLImageElement;
       asciiArtPreview.src = blobUrl;
+      const preview = document.getElementById("preview") as HTMLImageElement;
+      preview.src = "";
     };
     fileData.readAsDataURL(asciiArtBlob);
 
     isActiveFileUpLoderDisable.value = false;
     buttonDisable.value = false;
-    previewUploadImage.value = false;
     isAnnounsing.value = false;
   };
   return (
@@ -86,9 +85,7 @@ export default function ImageForm() {
           ファイルをアップロードする
         </button>
       </form>
-      {!previewUploadImage.value ? (
-        <img id="preview" class="max-w-xs max-h-56 " />
-      ) : undefined}
+      <img id="preview" class="max-w-xs max-h-56 " />
       {isAnnounsing.value ? (
         <div id="announce-generating">
           <h1>アスキーアートを生成中...</h1>
