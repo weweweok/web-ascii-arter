@@ -44,7 +44,7 @@ const downloadAsciiArt = (asciiArtFileType: Signal<string>) => {
 
   const download = document.createElement("a");
   download.href = asciiArt;
-  download.download = `ascii-art.${asciiArtFileType.value.split("/")[1]}`;
+  download.download = `ascii-art.${asciiArtFileType.value}`;
   document.body.appendChild(download);
   download.click();
   document.body.removeChild(download);
@@ -74,6 +74,12 @@ export default function ImageForm() {
       "upload-form",
     ) as HTMLFormElement;
     const image = imageElement.files[0];
+    const fileType = image.type.split("/")[1];
+    // fixme: ここでファイルタイプを取得しているが、サーバー側で取得するように修正する
+    // APIから取得できるファイルは現状gifのみなので、ここで取得している
+    asciiArtFileType.value = fileType === "jpeg" || fileType === "jpg"
+      ? "png"
+      : fileType;
 
     buttonDisable.value = true;
     isAnnounsing.value = true;
@@ -82,7 +88,6 @@ export default function ImageForm() {
     const blobUrl = await window.URL.createObjectURL(asciiArtBlob);
     const fileData = new FileReader();
     loadImageWhencreateAsciiArt(fileData, blobUrl);
-    asciiArtFileType.value = asciiArtBlob.type;
     fileData.readAsDataURL(asciiArtBlob);
 
     isActiveFileUpLoderDisable.value = false;
