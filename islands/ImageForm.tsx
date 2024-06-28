@@ -19,7 +19,7 @@ const loadImageWhenUploadImage = (
   const asciiArtPreview = document.getElementById(
     "ascii-art",
   ) as HTMLImageElement;
-  asciiArtPreview.src = "";
+  if (asciiArtPreview.src !== "") asciiArtPreview.src = "";
   const preview = document.getElementById("preview") as HTMLImageElement;
   preview.src = fileData.result as string;
 });
@@ -87,7 +87,7 @@ export default function ImageForm() {
     const asciiArtBlob = await createAsciiArt(image);
     const blobUrl = await window.URL.createObjectURL(asciiArtBlob);
     const fileData = new FileReader();
-    loadImageWhencreateAsciiArt(fileData, blobUrl);
+    await loadImageWhencreateAsciiArt(fileData, blobUrl);
     fileData.readAsDataURL(asciiArtBlob);
 
     isActiveFileUpLoderDisable.value = false;
@@ -101,9 +101,11 @@ export default function ImageForm() {
         <input
           type="file"
           disabled={isActiveFileUpLoderDisable.value}
-          enctype="multipart/form-data"
+          name="file-upload"
           id="upload-form"
+          aria-label="ファイルを選択"
           class="border-8 border-white"
+          accept={".jpg,.jpeg,.png,.gif"}
           onChange={(event) => uploadImage(event)}
         />
         <button
@@ -122,8 +124,16 @@ export default function ImageForm() {
           </div>
         )
         : undefined}
-      <img id="preview" class="max-w-xs max-h-56 " />
-      <img id="ascii-art" src="" class="max-w-xs max-h-56 content-center" />
+      <img
+        id="preview"
+        name="preview"
+        class="max-w-xs max-h-56 "
+      />
+      <img
+        id="ascii-art"
+        src=""
+        class="max-w-xs max-h-56 content-center"
+      />
       <button
         class="border border-black rounded-md border-green-300 bg-green-300"
         onClick={() => {
