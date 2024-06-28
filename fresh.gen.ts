@@ -2,27 +2,30 @@
 // This file SHOULD be checked into source version control.
 // This file is automatically updated during development when running `dev.ts`.
 
-import * as $0 from "./routes/_404.tsx";
-import * as $1 from "./routes/_app.tsx";
-import * as $2 from "./routes/greet/[name].tsx";
-import * as $3 from "./routes/index.tsx";
-import * as $$0 from "./islands/ImageForm.tsx";
-import * as $$1 from "./islands/Top.tsx";
-import * as $$2 from "./islands/subTitle.tsx";
+import * as $_404 from "./routes/_404.tsx";
+import * as $_app from "./routes/_app.tsx";
+import * as $api_creategif from "./routes/api/creategif.ts";
+import * as $greet_name_ from "./routes/greet/[name].tsx";
+import * as $index from "./routes/index.tsx";
+import * as $ImageForm from "./islands/ImageForm.tsx";
+import * as $Top from "./islands/Top.tsx";
+import * as $subTitle from "./islands/subTitle.tsx";
+import { type Manifest } from "$fresh/server.ts";
 
 const manifest = {
   routes: {
-    "./routes/_404.tsx": $0,
-    "./routes/_app.tsx": $1,
-    "./routes/greet/[name].tsx": $2,
-    "./routes/index.tsx": $3,
+    "./routes/_404.tsx": $_404,
+    "./routes/_app.tsx": $_app,
+    "./routes/api/creategif.ts": $api_creategif,
+    "./routes/greet/[name].tsx": $greet_name_,
+    "./routes/index.tsx": $index,
   },
   islands: {
-    "./islands/ImageForm.tsx": $$0,
-    "./islands/Top.tsx": $$1,
-    "./islands/subTitle.tsx": $$2,
+    "./islands/ImageForm.tsx": $ImageForm,
+    "./islands/Top.tsx": $Top,
+    "./islands/subTitle.tsx": $subTitle,
   },
   baseUrl: import.meta.url,
-};
+} satisfies Manifest;
 
 export default manifest;
