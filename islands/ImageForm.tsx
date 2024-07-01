@@ -18,12 +18,9 @@ const loadImageWhenUploadImage = (
   fileData: FileReader,
   uploadedImage: Signal<string>,
   imagePreviewOpen: Signal<boolean>,
+  asciiArtPreview: Signal<string>,
 ) => (fileData.onload = () => {
-  const asciiArtPreview = document.getElementById(
-    "ascii-art",
-  ) as HTMLImageElement;
-
-  if (asciiArtPreview.src !== "") asciiArtPreview.src = "";
+  if (asciiArtPreview.value !== "") asciiArtPreview.value = "";
   uploadedImage.value = fileData.result as string;
   imagePreviewOpen.value = true;
 });
@@ -33,11 +30,11 @@ const loadImageWhencreateAsciiArt = (
   blobUrl: string,
   uploadedImage: Signal<string>,
   imagePreviewOpen: Signal<boolean>,
+  asciiArtPreview: Signal<string>,
+  asciiArtPreviewOpen: Signal<boolean>,
 ) => (fileData.onload = () => {
-  const asciiArtPreview = document.getElementById(
-    "ascii-art",
-  ) as HTMLImageElement;
-  asciiArtPreview.src = blobUrl;
+  asciiArtPreview.value = blobUrl;
+  asciiArtPreviewOpen.value = true;
   uploadedImage.value = "";
   imagePreviewOpen.value = false;
 });
@@ -64,12 +61,18 @@ export default function ImageForm() {
   const errorDialogOpen = useSignal(false);
   const uploadedImage = useSignal("");
   const imagePreviewOpen = useSignal(false);
-
+  const asciiArtPreview = useSignal("");
+  const asciiArtPreviewOpen = useSignal(false);
   const uploadImage = (event: Event) => {
     isActiveFileUpLoderDisable.value = true;
 
     const fileData = new FileReader();
-    loadImageWhenUploadImage(fileData, uploadedImage, imagePreviewOpen);
+    loadImageWhenUploadImage(
+      fileData,
+      uploadedImage,
+      imagePreviewOpen,
+      asciiArtPreview,
+    );
 
     const inputElement = event.target as HTMLInputElement;
     if (inputElement.files) {
@@ -109,6 +112,8 @@ export default function ImageForm() {
       blobUrl,
       uploadedImage,
       imagePreviewOpen,
+      asciiArtPreview,
+      asciiArtPreviewOpen,
     );
     fileData.readAsDataURL(asciiArtBlob);
 
@@ -155,15 +160,23 @@ export default function ImageForm() {
             class="max-w-xs max-h-56 "
           />
         )}
-        <img id="ascii-art" src="" class="max-w-xs max-h-56 content-center" />
-        <button
-          class="border border-black rounded-md border-green-300 bg-green-300"
-          onClick={() => {
-            downloadAsciiArt(asciiArtFileType);
-          }}
-        >
-          アスキーアートをダウンロード
-        </button>
+        {asciiArtPreviewOpen.value && (
+          <div>
+            <img
+              id="ascii-art"
+              src={asciiArtPreview.value}
+              class="max-w-xs max-h-56 content-center"
+            />
+            <button
+              class="border border-black rounded-md border-green-300 bg-green-300"
+              onClick={() => {
+                downloadAsciiArt(asciiArtFileType);
+              }}
+            >
+              アスキーアートをダウンロード
+            </button>
+          </div>
+        )}
       </div>
       {errorDialogOpen.value && (
         <UploadError errorDialogOpen={errorDialogOpen} />
