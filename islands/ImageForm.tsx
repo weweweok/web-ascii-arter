@@ -1,4 +1,5 @@
 import { Signal, useSignal } from "https://esm.sh/*@preact/signals@1.2.1";
+import UploadError from "./dialogs/UploadError.tsx";
 
 const createAsciiArt = async (image: File) => {
   const formData = new FormData();
@@ -19,6 +20,7 @@ const loadImageWhenUploadImage = (
   const asciiArtPreview = document.getElementById(
     "ascii-art",
   ) as HTMLImageElement;
+
   if (asciiArtPreview.src !== "") asciiArtPreview.src = "";
   const preview = document.getElementById("preview") as HTMLImageElement;
   preview.src = fileData.result as string;
@@ -55,6 +57,7 @@ export default function ImageForm() {
   const buttonDisable = useSignal(false);
   const isAnnounsing = useSignal(false);
   const asciiArtFileType = useSignal("");
+  const errorDialogOpen = useSignal(false);
 
   const uploadImage = (event: Event) => {
     isActiveFileUpLoderDisable.value = true;
@@ -64,7 +67,15 @@ export default function ImageForm() {
 
     const inputElement = event.target as HTMLInputElement;
     if (inputElement.files) {
-      fileData.readAsDataURL(inputElement.files[0]);
+      if (
+        !["image/jpeg", "image/png", "image/gif"].includes(
+          inputElement.files[0].type,
+        )
+      ) {
+        errorDialogOpen.value = true;
+      } else {
+        fileData.readAsDataURL(inputElement.files[0]);
+      }
     }
   };
 
@@ -96,52 +107,49 @@ export default function ImageForm() {
   };
 
   return (
-    <div class="content-center items-center self-center translate-x-1/4">
-      <form action="post">
-        <input
-          type="file"
-          disabled={isActiveFileUpLoderDisable.value}
-          name="file-upload"
-          id="upload-form"
-          aria-label="ファイルを選択"
-          class="border-8 border-white"
-          accept={".jpg,.jpeg,.png,.gif"}
-          onChange={(event) => uploadImage(event)}
-        />
+    <>
+      <div class="content-center items-center self-center translate-x-1/4">
+        <form action="post">
+          <input
+            type="file"
+            disabled={isActiveFileUpLoderDisable.value}
+            name="file-upload"
+            id="upload-form"
+            aria-label="ファイルを選択"
+            class="border-8 border-white"
+            accept={".jpg,.jpeg,.png,.gif"}
+            onChange={(event) => uploadImage(event)}
+          />
+          <button
+            type="submit"
+            disabled={buttonDisable.value}
+            onClick={(e) => upLoadToServer(e)}
+            class="border-1 rounded-md border-blue-300 bg-blue-300"
+          >
+            ファイルをアップロードする
+          </button>
+        </form>
+        {isAnnounsing.value
+          ? (
+            <div id="announce-generating">
+              <h1>アスキーアートを生成中...</h1>
+            </div>
+          )
+          : undefined}
+        <img id="preview" name="preview" class="max-w-xs max-h-56 " />
+        <img id="ascii-art" src="" class="max-w-xs max-h-56 content-center" />
         <button
-          type="submit"
-          disabled={buttonDisable.value}
-          onClick={(e) => upLoadToServer(e)}
-          class="border-1 rounded-md border-blue-300 bg-blue-300"
+          class="border border-black rounded-md border-green-300 bg-green-300"
+          onClick={() => {
+            downloadAsciiArt(asciiArtFileType);
+          }}
         >
-          ファイルをアップロードする
+          アスキーアートをダウンロード
         </button>
-      </form>
-      {isAnnounsing.value
-        ? (
-          <div id="announce-generating">
-            <h1>アスキーアートを生成中...</h1>
-          </div>
-        )
-        : undefined}
-      <img
-        id="preview"
-        name="preview"
-        class="max-w-xs max-h-56 "
-      />
-      <img
-        id="ascii-art"
-        src=""
-        class="max-w-xs max-h-56 content-center"
-      />
-      <button
-        class="border border-black rounded-md border-green-300 bg-green-300"
-        onClick={() => {
-          downloadAsciiArt(asciiArtFileType);
-        }}
-      >
-        アスキーアートをダウンロード
-      </button>
-    </div>
+      </div>
+      {errorDialogOpen.value && (
+        <UploadError errorDialogOpen={errorDialogOpen} />
+      )}
+    </>
   );
 }

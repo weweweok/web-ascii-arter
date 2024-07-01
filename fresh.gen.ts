@@ -4,11 +4,11 @@
 
 import * as $_404 from "./routes/_404.tsx";
 import * as $_app from "./routes/_app.tsx";
-import * as $api_creategif from "./routes/api/creategif.ts";
 import * as $greet_name_ from "./routes/greet/[name].tsx";
 import * as $index from "./routes/index.tsx";
 import * as $ImageForm from "./islands/ImageForm.tsx";
 import * as $Top from "./islands/Top.tsx";
+import * as $dialogs_UploadError from "./islands/dialogs/UploadError.tsx";
 import * as $subTitle from "./islands/subTitle.tsx";
 import { type Manifest } from "$fresh/server.ts";
 
@@ -16,13 +16,13 @@ const manifest = {
   routes: {
     "./routes/_404.tsx": $_404,
     "./routes/_app.tsx": $_app,
-    "./routes/api/creategif.ts": $api_creategif,
     "./routes/greet/[name].tsx": $greet_name_,
     "./routes/index.tsx": $index,
   },
   islands: {
     "./islands/ImageForm.tsx": $ImageForm,
     "./islands/Top.tsx": $Top,
+    "./islands/dialogs/UploadError.tsx": $dialogs_UploadError,
     "./islands/subTitle.tsx": $subTitle,
   },
   baseUrl: import.meta.url,
