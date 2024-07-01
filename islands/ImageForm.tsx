@@ -39,11 +39,11 @@ const loadImageWhencreateAsciiArt = (
   imagePreviewOpen.value = false;
 });
 
-const downloadAsciiArt = (asciiArtFileType: Signal<string>) => {
-  const asciiArtPreview = document.getElementById(
-    "ascii-art",
-  ) as HTMLImageElement;
-  const asciiArt = asciiArtPreview.src;
+const downloadAsciiArt = (
+  asciiArtFileType: Signal<string>,
+  asciiArtPreview: Signal<string>,
+) => {
+  const asciiArt = asciiArtPreview.value;
 
   const download = document.createElement("a");
   download.href = asciiArt;
@@ -170,7 +170,7 @@ export default function ImageForm() {
             <button
               class="border border-black rounded-md border-green-300 bg-green-300"
               onClick={() => {
-                downloadAsciiArt(asciiArtFileType);
+                downloadAsciiArt(asciiArtFileType, asciiArtPreview);
               }}
             >
               アスキーアートをダウンロード
