@@ -16,26 +16,30 @@ const createAsciiArt = async (image: File) => {
 
 const loadImageWhenUploadImage = (
   fileData: FileReader,
+  uploadedImage: Signal<string>,
+  imagePreviewOpen: Signal<boolean>,
 ) => (fileData.onload = () => {
   const asciiArtPreview = document.getElementById(
     "ascii-art",
   ) as HTMLImageElement;
 
   if (asciiArtPreview.src !== "") asciiArtPreview.src = "";
-  const preview = document.getElementById("preview") as HTMLImageElement;
-  preview.src = fileData.result as string;
+  uploadedImage.value = fileData.result as string;
+  imagePreviewOpen.value = true;
 });
 
 const loadImageWhencreateAsciiArt = (
   fileData: FileReader,
   blobUrl: string,
+  uploadedImage: Signal<string>,
+  imagePreviewOpen: Signal<boolean>,
 ) => (fileData.onload = () => {
   const asciiArtPreview = document.getElementById(
     "ascii-art",
   ) as HTMLImageElement;
   asciiArtPreview.src = blobUrl;
-  const preview = document.getElementById("preview") as HTMLImageElement;
-  preview.src = "";
+  uploadedImage.value = "";
+  imagePreviewOpen.value = false;
 });
 
 const downloadAsciiArt = (asciiArtFileType: Signal<string>) => {
@@ -58,12 +62,14 @@ export default function ImageForm() {
   const isAnnounsing = useSignal(false);
   const asciiArtFileType = useSignal("");
   const errorDialogOpen = useSignal(false);
+  const uploadedImage = useSignal("");
+  const imagePreviewOpen = useSignal(false);
 
   const uploadImage = (event: Event) => {
     isActiveFileUpLoderDisable.value = true;
 
     const fileData = new FileReader();
-    loadImageWhenUploadImage(fileData);
+    loadImageWhenUploadImage(fileData, uploadedImage, imagePreviewOpen);
 
     const inputElement = event.target as HTMLInputElement;
     if (inputElement.files) {
@@ -98,7 +104,12 @@ export default function ImageForm() {
     const asciiArtBlob = await createAsciiArt(image);
     const blobUrl = await window.URL.createObjectURL(asciiArtBlob);
     const fileData = new FileReader();
-    await loadImageWhencreateAsciiArt(fileData, blobUrl);
+    await loadImageWhencreateAsciiArt(
+      fileData,
+      blobUrl,
+      uploadedImage,
+      imagePreviewOpen,
+    );
     fileData.readAsDataURL(asciiArtBlob);
 
     isActiveFileUpLoderDisable.value = false;
@@ -136,7 +147,14 @@ export default function ImageForm() {
             </div>
           )
           : undefined}
-        <img id="preview" name="preview" class="max-w-xs max-h-56 " />
+        {imagePreviewOpen.value && (
+          <img
+            id="preview"
+            name="preview"
+            src={uploadedImage.value}
+            class="max-w-xs max-h-56 "
+          />
+        )}
         <img id="ascii-art" src="" class="max-w-xs max-h-56 content-center" />
         <button
           class="border border-black rounded-md border-green-300 bg-green-300"
