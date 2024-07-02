@@ -1,6 +1,5 @@
 import {
   cleanup,
-  findByRole,
   fireEvent,
   render,
   setup,
